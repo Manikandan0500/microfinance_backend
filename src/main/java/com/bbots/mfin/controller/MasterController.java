@@ -63,6 +63,11 @@ public class MasterController {
         return ResponseEntity.ok(response);
     }
     
+    @GetMapping("/createRegion")
+    public List<Region> getAllRegion() {
+        return regionRepository.findAll();
+    }
+    
     @GetMapping("/config")
     public List<Auth101> getAllConfigs() {
         return auth101Repository.findAll();
@@ -70,7 +75,7 @@ public class MasterController {
  
     @PostMapping("/config")
     public ResponseEntity<Map<String, String>> createConfig(@RequestBody Auth101 auth101) {
-        if (auth101.getId() == null || auth101.getId().getOrgCode() == null || auth101.getId().getProgramId() == null) {
+        if (auth101.getOrgCode() == null) {
             return ResponseEntity.badRequest().build();
         }
  
@@ -79,7 +84,7 @@ public class MasterController {
  
         auth101Repository.save(auth101);
  
-        authProcedureService.processAuthorization(auth101.getId().getOrgCode(), "AUTHCTL", "auth101", auth101, "INSERT");
+        authProcedureService.processAuthorization(auth101.getOrgCode(), "AUTHCTL", "auth101", auth101, "INSERT");
  
         return ResponseEntity.ok(Collections.singletonMap("message", "Authorization Configuration stored successfully"));
     }
