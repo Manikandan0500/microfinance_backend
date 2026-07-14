@@ -14,5 +14,7 @@ public interface MasterService {
 	 ResponseDTO<List<Auth101>> getAuthConfigs(Long orgCode);
 	 
 	 ResponseDTO<List<AuthQ001>> getAuthQueueData(Long orgCode);
+	 
+	 ResponseDTO<List<Region>> getRegionData(Long orgCode);
 
 }

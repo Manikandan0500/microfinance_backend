@@ -27,12 +27,12 @@ public class MasterServiceImpl implements MasterService {
 
 	@Resource
 	private AuthorizationProcedureService authProcedureService;
-	
-    @Resource
-    private Auth101Repository auth101Repository;
-    
-    @Resource
-    private AuthQ001Repository authQ001Repository;
+
+	@Resource
+	private Auth101Repository auth101Repository;
+
+	@Resource
+	private AuthQ001Repository authQ001Repository;
 
 	@Override
 	public ResponseDTO<Region> createRegion(Region region) {
@@ -71,18 +71,17 @@ public class MasterServiceImpl implements MasterService {
 
 	@Override
 	public ResponseDTO<List<Auth101>> getAuthConfigs(Long orgCode) {
-		
-		List<Auth101> resultData =  new ArrayList<>();
+
+		List<Auth101> resultData = new ArrayList<>();
 		ResponseDTO<List<Auth101>> responseDTO = new ResponseDTO<>();
 
 		try {
 			resultData = auth101Repository.findByIdOrgCode(orgCode);
-			
+
 			responseDTO.setSuccess(true);
 			responseDTO.setMessage("Record featch successfully");
 			responseDTO.setData(resultData);
-			
-			
+
 		} catch (Exception e) {
 			responseDTO.setSuccess(false);
 			responseDTO.setMessage(e.getMessage());
@@ -92,25 +91,42 @@ public class MasterServiceImpl implements MasterService {
 
 	@Override
 	public ResponseDTO<List<AuthQ001>> getAuthQueueData(Long orgCode) {
-		
-		List<AuthQ001> resultData =  new ArrayList<>();
+
+		List<AuthQ001> resultData = new ArrayList<>();
 		ResponseDTO<List<AuthQ001>> responseDTO = new ResponseDTO<>();
 
 		try {
 			resultData = authQ001Repository.findByIdOrgCode(orgCode);
-			
+
 			responseDTO.setSuccess(true);
 			responseDTO.setMessage("Record featch successfully");
 			responseDTO.setData(resultData);
-			
-			
+
 		} catch (Exception e) {
 			responseDTO.setSuccess(false);
 			responseDTO.setMessage(e.getMessage());
 		}
 		return responseDTO;
 
+	}
 
+	@Override
+	public ResponseDTO<List<Region>> getRegionData(Long orgCode) {
+		List<Region> resultData = new ArrayList<>();
+		ResponseDTO<List<Region>> responseDTO = new ResponseDTO<>();
+
+		try {
+			resultData = regionRepository.findByIdOrgCode(orgCode);
+
+			responseDTO.setSuccess(true);
+			responseDTO.setMessage("Record featch successfully");
+			responseDTO.setData(resultData);
+
+		} catch (Exception e) {
+			responseDTO.setSuccess(false);
+			responseDTO.setMessage(e.getMessage());
+		}
+		return responseDTO;
 	}
 
 }

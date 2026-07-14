@@ -78,10 +78,12 @@ public class MasterController {
 		return result;
 	}
 
-	@GetMapping("/getRegionData")
-	public List<Region> getAllRegion() {
+	@GetMapping("/getRegionData/{orgCode}")
+	public ResponseDTO<List<Region>> getRegionData(@PathVariable Long orgCode) {
+		
+		ResponseDTO<List<Region>> result = masterService.getRegionData(orgCode);
 
-		return regionRepository.findAll();
+		return result;
 	}
 
 
