@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bbots.mfin.dto.Auth101;
+import com.bbots.mfin.dto.AuthQ001;
 import com.bbots.mfin.dto.Region;
 import com.bbots.mfin.dto.RegionId;
 import com.bbots.mfin.dto.ResponseDTO;
@@ -30,64 +31,76 @@ import com.bbots.mfin.repository.RegionRepository;
 import com.bbots.mfin.service.AuthorizationProcedureService;
 import com.bbots.mfin.service.MasterService;
 
-
 @RestController
 @RequestMapping("/api/master")
 @CrossOrigin(origins = "*")
 public class MasterController {
 
-    @Resource
-    private RegionRepository regionRepository;
-    
-    @Resource
-    private MasterService masterService;
-    
-    @Resource
-    private Auth101Repository auth101Repository;
-    
-    @Resource
-    private AuthorizationProcedureService authProcedureService;
-    
- 
-    @PostMapping("/createRegion")
-    public ResponseEntity<ResponseDTO<Region>> createRegion(@RequestBody Region region) {
-        if (region.getId() == null || region.getId().getOrgCode() == null || region.getId().getRegionCode() == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        
-        ResponseDTO<Region> response = masterService.createRegion(region);
-//        if (!response.isSuccess()) {
-//            return ResponseEntity.badRequest().body(response);
-//        }
+	@Resource
+	private RegionRepository regionRepository;
 
-        return ResponseEntity.ok(response);
-    }
-    
-    @GetMapping("/createRegion")
-    public List<Region> getAllRegion() {
-        return regionRepository.findAll();
-    }
-    
-    @GetMapping("/config")
-    public List<Auth101> getAllConfigs() {
-        return auth101Repository.findAll();
-    }
- 
-    @PostMapping("/config")
-    public ResponseEntity<Map<String, String>> createConfig(@RequestBody Auth101 auth101) {
-        if (auth101.getOrgCode() == null) {
-            return ResponseEntity.badRequest().build();
-        }
- 
-        auth101.seteUser("admin");
-        auth101.seteDate(LocalDate.now());
- 
-        auth101Repository.save(auth101);
- 
-        authProcedureService.processAuthorization(auth101.getOrgCode(), "AUTHCTL", "auth101", auth101, "INSERT");
- 
-        return ResponseEntity.ok(Collections.singletonMap("message", "Authorization Configuration stored successfully"));
-    }
-    
-    
+	@Resource
+	private MasterService masterService;
+
+	@Resource
+	private Auth101Repository auth101Repository;
+
+	@Resource
+	private AuthorizationProcedureService authProcedureService;
+
+	@PostMapping("/createRegion")
+	public ResponseEntity<ResponseDTO<Region>> createRegion(@RequestBody Region region) {
+		if (region.getId() == null || region.getId().getOrgCode() == null || region.getId().getRegionCode() == null) {
+			return ResponseEntity.badRequest().build();
+		}
+
+		ResponseDTO<Region> response = masterService.createRegion(region);
+		if (!response.isSuccess()) {
+			return ResponseEntity.badRequest().body(response);
+		} else {
+			return ResponseEntity.ok(response);
+		}
+	}
+	
+	@GetMapping("/getAuthConfigData/{orgCode}")
+	public ResponseDTO<List<Auth101>> getAuthConfigs(@PathVariable Long orgCode) {
+
+		ResponseDTO<List<Auth101>> result = masterService.getAuthConfigs(orgCode);
+
+		return result;
+	}
+	
+	@GetMapping("/getAuthQueueData/{orgCode}")
+	public ResponseDTO<List<AuthQ001>> getAuthQueueData(@PathVariable Long orgCode) {
+
+		ResponseDTO<List<AuthQ001>> result = masterService.getAuthQueueData(orgCode);
+
+		return result;
+	}
+
+	@GetMapping("/getRegionData")
+	public List<Region> getAllRegion() {
+
+		return regionRepository.findAll();
+	}
+
+
+
+	@PostMapping("/authConfig")
+	public ResponseEntity<Map<String, String>> createConfig(@RequestBody Auth101 auth101) {
+		if (auth101.getOrgCode() == null) {
+			return ResponseEntity.badRequest().build();
+		}
+
+		auth101.seteUser("admin");
+		auth101.seteDate(LocalDate.now());
+
+		auth101Repository.save(auth101);
+
+		authProcedureService.processAuthorization(auth101.getOrgCode(), "AUTHCTL", "auth101", auth101, "INSERT");
+
+		return ResponseEntity
+				.ok(Collections.singletonMap("message", "Authorization Configuration stored successfully"));
+	}
+
 }

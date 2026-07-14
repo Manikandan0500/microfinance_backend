@@ -21,8 +21,17 @@ public class Auth101 {
     private LocalDate cDate;
     private String aUser;
     private LocalDate aDate;
+    private Long orgCode;
  
-    public Auth101() {}
+    public Long getOrgCode() {
+		return orgCode;
+	}
+
+	public void setOrgCode(Long orgCode) {
+		this.orgCode = orgCode;
+	}
+
+	public Auth101() {}
  
     public Auth101Id getId() {
         return id;
@@ -143,4 +152,8 @@ public class Auth101 {
     public void setaDate(LocalDate aDate) {
         this.aDate = aDate;
     }
+
+
+    
+    
 }

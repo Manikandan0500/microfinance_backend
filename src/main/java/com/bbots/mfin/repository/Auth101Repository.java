@@ -55,6 +55,7 @@ public class Auth101Repository {
         String sql = "SELECT * FROM loandev.auth101";
         return jdbcTemplate.query(sql, rowMapper);
     }
+
  
     public List<Auth101> findByIdOrgCode(Long orgCode) {
         String sql = "SELECT * FROM loandev.auth101 WHERE orgcode = ?";
