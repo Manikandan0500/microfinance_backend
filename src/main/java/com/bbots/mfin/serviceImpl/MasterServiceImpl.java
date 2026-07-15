@@ -40,6 +40,7 @@ public class MasterServiceImpl implements MasterService {
 		ResponseDTO<Region> responseDTO = new ResponseDTO<>();
 
 		try {
+			
 
 			RegionId id = region.getId();
 			if (regionRepository.existsById(id)) {
@@ -49,10 +50,14 @@ public class MasterServiceImpl implements MasterService {
 				return responseDTO;
 			}
 
+			region.setOrgcode(region.getId().getOrgCode());
+			region.setRegion_code(region.getId().getRegionCode());
 			region.seteUser("admin");
-			region.seteDate(LocalDate.now());
+			region.seteDate(LocalDate.now().toString());
+			
+			region.setId(new RegionId());
 
-			authProcedureService.processAuthorization(region.getId().getOrgCode(), "REGMAS", "rgn001", region,
+			authProcedureService.processAuthorization(region.getOrgcode(), "REGMAS", "rgn001", region,
 					"INSERT");
 
 			responseDTO.setSuccess(true);

@@ -48,7 +48,7 @@ public class RegionController {
 
         // Set entry metadata
         region.seteUser("admin");
-        region.seteDate(LocalDate.now());
+        region.seteDate(LocalDate.now().toString());
 
         Region savedRegion = regionRepository.save(region);
         return ResponseEntity.ok(savedRegion);
@@ -62,13 +62,13 @@ public class RegionController {
         
         RegionId id = new RegionId(orgCode, regionCode);
         return regionRepository.findById(id).map(existingRegion -> {
-            existingRegion.setRegionName(updatedRegionDetails.getRegionName());
+            existingRegion.setRegion_name(updatedRegionDetails.getRegion_name());
             existingRegion.setState(updatedRegionDetails.getState());
             existingRegion.setZone(updatedRegionDetails.getZone());
             
             // Set update metadata
             existingRegion.setcUser("admin");
-            existingRegion.setcDate(LocalDate.now());
+            existingRegion.setcDate(LocalDate.now().toString());
             
             Region savedRegion = regionRepository.save(existingRegion);
             return ResponseEntity.ok(savedRegion);

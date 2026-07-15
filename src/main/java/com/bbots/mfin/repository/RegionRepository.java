@@ -25,27 +25,15 @@ public class RegionRepository {
         );
         Region region = new Region();
         region.setId(id);
-        region.setRegionName(rs.getString("region_name"));
+        region.setRegion_name(rs.getString("region_name"));
         region.setState(rs.getString("state"));
         region.setZone(rs.getString("zone"));
         region.seteUser(rs.getString("euser"));
-        
-        Date edate = rs.getDate("edate");
-        if (edate != null) {
-            region.seteDate(edate.toLocalDate());
-        }
-        
+        region.seteDate(rs.getString("edate"));
         region.setaUser(rs.getString("auser"));
-        Date adate = rs.getDate("adate");
-        if (adate != null) {
-            region.setaDate(adate.toLocalDate());
-        }
-        
-        region.setcUser(rs.getString("cuser"));
-        Date cdate = rs.getDate("cdate");
-        if (cdate != null) {
-            region.setcDate(cdate.toLocalDate());
-        }
+        region.setaDate(rs.getString("adate"));
+        region.setcDate( rs.getString("cdate"));
+       
         
         return region;
     };
@@ -79,7 +67,7 @@ public class RegionRepository {
                          "WHERE orgcode = ? AND region_code = ?";
             jdbcTemplate.update(
                 sql,
-                region.getRegionName(),
+                region.getRegion_name(),
                 region.getState(),
                 region.getZone(),
                 region.getcUser(),
@@ -95,7 +83,7 @@ public class RegionRepository {
                 sql,
                 region.getId().getOrgCode(),
                 region.getId().getRegionCode(),
-                region.getRegionName(),
+                region.getRegion_name(),
                 region.getState(),
                 region.getZone(),
                 region.geteUser(),

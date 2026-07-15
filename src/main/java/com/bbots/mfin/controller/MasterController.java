@@ -28,6 +28,7 @@ import com.bbots.mfin.dto.RegionId;
 import com.bbots.mfin.dto.ResponseDTO;
 import com.bbots.mfin.repository.Auth101Repository;
 import com.bbots.mfin.repository.RegionRepository;
+import com.bbots.mfin.service.AuthService;
 import com.bbots.mfin.service.AuthorizationProcedureService;
 import com.bbots.mfin.service.MasterService;
 
@@ -47,6 +48,9 @@ public class MasterController {
 
 	@Resource
 	private AuthorizationProcedureService authProcedureService;
+	
+    @Resource
+    private AuthService authService;
 
 	@PostMapping("/createRegion")
 	public ResponseEntity<ResponseDTO<Region>> createRegion(@RequestBody Region region) {
@@ -104,5 +108,16 @@ public class MasterController {
 		return ResponseEntity
 				.ok(Collections.singletonMap("message", "Authorization Configuration stored successfully"));
 	}
+	
+    @PostMapping("/authSubmit/{authSl}")
+    public void approve(@PathVariable Long authSl, @RequestParam int level, @RequestParam String userId) {
+    	authService.approve(authSl, level, userId);
+    }
+ 
+    @PostMapping("/authReject/{authSl}")
+    public void reject(@PathVariable Long authSl, @RequestParam int level, @RequestParam String userId) {
+    	authService.reject(authSl, level, userId);
+    }
+ 
 
 }
