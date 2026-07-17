@@ -79,6 +79,15 @@
 			<artifactId>aws-java-sdk-s3</artifactId>
 			<version>1.12.770</version>
 		</dependency>
+		<dependency>
+			<groupId>com.am</groupId>
+			<artifactId>am_service</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
