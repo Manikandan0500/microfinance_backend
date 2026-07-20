@@ -31,6 +31,7 @@ import com.bbots.mfin.dto.GLMappingDTO;
 import com.bbots.mfin.dto.HolidayCalendarDTO;
 import com.bbots.mfin.dto.LoanProductDTO;
 import com.bbots.mfin.dto.PenaltyRateHistoryDTO;
+import com.bbots.mfin.dto.PrepaymentForeclosureConfigDTO;
 import com.bbots.mfin.dto.RateRevisionHistoryDTO;
 import com.bbots.mfin.dto.ResponseDTO;
 import com.bbots.mfin.repository.Auth101Repository;
@@ -360,4 +361,63 @@ public class MasterController {
 
 	    return ResponseEntity.ok(result.getData());
 	}
+	
+	@PostMapping("/createPrepaymentForeclosureConfig")
+
+	public ResponseEntity<?> createPrepaymentForeclosureConfig(
+
+	        @RequestBody PrepaymentForeclosureConfigDTO config) {
+	 
+	    ResponseDTO<PrepaymentForeclosureConfigDTO> result =
+
+	            masterService.createPrepaymentForeclosureConfig(config);
+	 
+	    if (result.isSuccess()) {
+
+	        return ResponseEntity.ok(result.getData());
+
+	    }
+	 
+	    return ResponseEntity.badRequest()
+
+	            .body(Collections.singletonMap("message", result.getMessage()));
+
+	}
+	 
+	@PutMapping("/updatePrepaymentForeclosureConfig")
+
+	public ResponseEntity<?> updatePrepaymentForeclosureConfig(
+
+	        @RequestBody PrepaymentForeclosureConfigDTO config) {
+	 
+	    ResponseDTO<PrepaymentForeclosureConfigDTO> result =
+
+	            masterService.updatePrepaymentForeclosureConfig(config);
+	 
+	    if (result.isSuccess()) {
+
+	        return ResponseEntity.ok(result.getData());
+
+	    }
+	 
+	    return ResponseEntity.badRequest()
+
+	            .body(Collections.singletonMap("message", result.getMessage()));
+
+	}
+	 
+	@GetMapping("/getPrepaymentForeclosureConfigData/{orgCode}")
+
+	public ResponseEntity<List<PrepaymentForeclosureConfigDTO>> getPrepaymentForeclosureConfigData(
+
+	        @PathVariable Long orgCode) {
+	 
+	    ResponseDTO<List<PrepaymentForeclosureConfigDTO>> result =
+
+	            masterService.getPrepaymentForeclosureConfigData(orgCode);
+	 
+	    return ResponseEntity.ok(result.getData());
+
+	}
+	 
 }

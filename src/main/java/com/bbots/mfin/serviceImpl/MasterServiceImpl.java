@@ -19,6 +19,7 @@ import com.bbots.mfin.dto.GLMappingDTO;
 import com.bbots.mfin.dto.HolidayCalendarDTO;
 import com.bbots.mfin.dto.LoanProductDTO;
 import com.bbots.mfin.dto.PenaltyRateHistoryDTO;
+import com.bbots.mfin.dto.PrepaymentForeclosureConfigDTO;
 import com.bbots.mfin.dto.RateRevisionHistoryDTO;
 import com.bbots.mfin.dto.ResponseDTO;
 import com.bbots.mfin.repository.Auth101Repository;
@@ -30,6 +31,7 @@ import com.bbots.mfin.repository.GLMappingRepository;
 import com.bbots.mfin.repository.HolidayCalendarRepository;
 import com.bbots.mfin.repository.LoanProductRepository;
 import com.bbots.mfin.repository.PenaltyRateHistoryRepository;
+import com.bbots.mfin.repository.PrepaymentForeclosureConfigRepository;
 import com.bbots.mfin.repository.RateRevisionHistoryRepository;
 import com.bbots.mfin.service.AuthorizationProcedureService;
 import com.bbots.mfin.service.MasterService;
@@ -69,6 +71,11 @@ public class MasterServiceImpl implements MasterService {
 	
 	@Resource
 	private HolidayCalendarRepository holidayCalendarRepository;
+	
+	@Resource
+
+	private PrepaymentForeclosureConfigRepository prepaymentForeclosureConfigRepository;
+	 
 
 	@Override
 	public ResponseDTO<Region> createRegion(Region region) {
@@ -843,5 +850,150 @@ public class MasterServiceImpl implements MasterService {
 
 	    return responseDTO;
 	}
+	
+	
+	@Override
+
+	public ResponseDTO<List<PrepaymentForeclosureConfigDTO>> getPrepaymentForeclosureConfigData(Long orgCode) {
+	 
+	    List<PrepaymentForeclosureConfigDTO> resultData = new ArrayList<>();
+
+	    ResponseDTO<List<PrepaymentForeclosureConfigDTO>> responseDTO = new ResponseDTO<>();
+	 
+	    try {
+	 
+	        resultData = prepaymentForeclosureConfigRepository.findByIdOrgCode(orgCode);
+	 
+	        responseDTO.setSuccess(true);
+
+	        responseDTO.setMessage("Record fetched successfully");
+
+	        responseDTO.setData(resultData);
+	 
+	    } catch (Exception e) {
+	 
+	        responseDTO.setSuccess(false);
+
+	        responseDTO.setMessage(e.getMessage());
+
+	    }
+	 
+	    return responseDTO;
+
+	}
+	 
+	@Override
+
+	public ResponseDTO<PrepaymentForeclosureConfigDTO> createPrepaymentForeclosureConfig(PrepaymentForeclosureConfigDTO config) {
+	 
+	    ResponseDTO<PrepaymentForeclosureConfigDTO> responseDTO = new ResponseDTO<>();
+	 
+	    try {
+	 
+	        if (prepaymentForeclosureConfigRepository.existsById(
+
+	                config.getOrgcode(),
+
+	                config.getProduct_code())) {
+	 
+	            responseDTO.setSuccess(false);
+
+	            responseDTO.setMessage("Prepayment / Foreclosure Configuration already exists");
+
+	            return responseDTO;
+
+	        }
+	 
+	        config.setEuser("admin");
+
+	        config.setEdate(LocalDate.now().toString());
+	 
+	        authProcedureService.processAuthorization(
+
+	                config.getOrgcode(),
+
+	                "LOANPFC",
+
+	                "LOAN107",
+
+	                config,
+
+	                "INSERT");
+	 
+	        responseDTO.setSuccess(true);
+
+	        responseDTO.setMessage("Sent for authorization");
+
+	        responseDTO.setData(config);
+	 
+	    } catch (Exception e) {
+	 
+	        responseDTO.setSuccess(false);
+
+	        responseDTO.setMessage(e.getMessage());
+
+	    }
+	 
+	    return responseDTO;
+
+	}
+	 
+	@Override
+
+	public ResponseDTO<PrepaymentForeclosureConfigDTO> updatePrepaymentForeclosureConfig(PrepaymentForeclosureConfigDTO config) {
+	 
+	    ResponseDTO<PrepaymentForeclosureConfigDTO> responseDTO = new ResponseDTO<>();
+	 
+	    try {
+	 
+	        if (!prepaymentForeclosureConfigRepository.existsById(
+
+	                config.getOrgcode(),
+
+	                config.getProduct_code())) {
+	 
+	            responseDTO.setSuccess(false);
+
+	            responseDTO.setMessage("Prepayment / Foreclosure Configuration does not exist");
+
+	            return responseDTO;
+
+	        }
+	 
+	        config.setEuser("admin");
+
+	        config.setEdate(LocalDate.now().toString());
+	 
+	        authProcedureService.processAuthorization(
+
+	                config.getOrgcode(),
+
+	                "LOANPFC",
+
+	                "LOAN107",
+
+	                config,
+
+	                "UPDATE");
+	 
+	        responseDTO.setSuccess(true);
+
+	        responseDTO.setMessage("Sent for authorization");
+
+	        responseDTO.setData(config);
+	 
+	    } catch (Exception e) {
+	 
+	        responseDTO.setSuccess(false);
+
+	        responseDTO.setMessage(e.getMessage());
+
+	    }
+	 
+	    return responseDTO;
+
+	}
+	 
+	
 
 }

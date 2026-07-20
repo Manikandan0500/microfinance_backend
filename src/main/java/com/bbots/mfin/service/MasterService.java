@@ -11,6 +11,7 @@ import com.bbots.mfin.dto.GLMappingDTO;
 import com.bbots.mfin.dto.HolidayCalendarDTO;
 import com.bbots.mfin.dto.LoanProductDTO;
 import com.bbots.mfin.dto.PenaltyRateHistoryDTO;
+import com.bbots.mfin.dto.PrepaymentForeclosureConfigDTO;
 import com.bbots.mfin.dto.RateRevisionHistoryDTO;
 import com.bbots.mfin.dto.ResponseDTO;
 
@@ -65,4 +66,10 @@ public interface MasterService {
 	 ResponseDTO<HolidayCalendarDTO> createHolidayCalendar(HolidayCalendarDTO holiday);
 
 	 ResponseDTO<HolidayCalendarDTO> updateHolidayCalendar(HolidayCalendarDTO holiday);
+	 
+	 ResponseDTO<List<PrepaymentForeclosureConfigDTO>> getPrepaymentForeclosureConfigData(Long orgCode);
+	 
+	 ResponseDTO<PrepaymentForeclosureConfigDTO> createPrepaymentForeclosureConfig(PrepaymentForeclosureConfigDTO config);
+	  
+	 ResponseDTO<PrepaymentForeclosureConfigDTO> updatePrepaymentForeclosureConfig(PrepaymentForeclosureConfigDTO config);
 }
