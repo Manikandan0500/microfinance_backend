@@ -7,8 +7,11 @@ import com.bbots.mfin.dto.AuthQ001;
 import com.bbots.mfin.dto.Region;
 import com.bbots.mfin.dto.BranchRegionMap;
 import com.bbots.mfin.dto.DelinquencyBucketDTO;
+import com.bbots.mfin.dto.GLMappingDTO;
+import com.bbots.mfin.dto.HolidayCalendarDTO;
 import com.bbots.mfin.dto.LoanProductDTO;
 import com.bbots.mfin.dto.PenaltyRateHistoryDTO;
+import com.bbots.mfin.dto.RateRevisionHistoryDTO;
 import com.bbots.mfin.dto.ResponseDTO;
 
 public interface MasterService {
@@ -44,4 +47,22 @@ public interface MasterService {
 	 ResponseDTO<PenaltyRateHistoryDTO> createPenaltyRateHistory(PenaltyRateHistoryDTO penalty);
 
 	 ResponseDTO<PenaltyRateHistoryDTO> updatePenaltyRateHistory(PenaltyRateHistoryDTO penalty);
+	 
+	 ResponseDTO<List<GLMappingDTO>> getGLMappingData(Long orgCode);
+
+	 ResponseDTO<GLMappingDTO> createGLMapping(GLMappingDTO map);
+
+	 ResponseDTO<GLMappingDTO> updateGLMapping(GLMappingDTO map);
+	 
+	 ResponseDTO<List<RateRevisionHistoryDTO>> getRateRevisionHistoryData(Long orgCode);
+
+	 ResponseDTO<RateRevisionHistoryDTO> createRateRevisionHistory(RateRevisionHistoryDTO rate);
+
+	 ResponseDTO<RateRevisionHistoryDTO> updateRateRevisionHistory(RateRevisionHistoryDTO rate);
+	 
+	 ResponseDTO<List<HolidayCalendarDTO>> getHolidayCalendarData(Long orgCode);
+
+	 ResponseDTO<HolidayCalendarDTO> createHolidayCalendar(HolidayCalendarDTO holiday);
+
+	 ResponseDTO<HolidayCalendarDTO> updateHolidayCalendar(HolidayCalendarDTO holiday);
 }

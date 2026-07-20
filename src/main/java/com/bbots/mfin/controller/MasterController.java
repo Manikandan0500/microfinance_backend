@@ -27,8 +27,11 @@ import com.bbots.mfin.dto.Region;
 import com.bbots.mfin.dto.RegionId;
 import com.bbots.mfin.dto.BranchRegionMap;
 import com.bbots.mfin.dto.DelinquencyBucketDTO;
+import com.bbots.mfin.dto.GLMappingDTO;
+import com.bbots.mfin.dto.HolidayCalendarDTO;
 import com.bbots.mfin.dto.LoanProductDTO;
 import com.bbots.mfin.dto.PenaltyRateHistoryDTO;
+import com.bbots.mfin.dto.RateRevisionHistoryDTO;
 import com.bbots.mfin.dto.ResponseDTO;
 import com.bbots.mfin.repository.Auth101Repository;
 import com.bbots.mfin.repository.RegionRepository;
@@ -245,5 +248,116 @@ public class MasterController {
 
 	    return ResponseEntity.ok(result.getData());
 	}
+	
+	
+	@PostMapping("/createGLMapping")
+	public ResponseEntity<?> createGLMapping(@RequestBody GLMappingDTO map) {
 
+	    ResponseDTO<GLMappingDTO> result = masterService.createGLMapping(map);
+
+	    if (result.isSuccess()) {
+	        return ResponseEntity.ok(result.getData());
+	    }
+
+	    return ResponseEntity.badRequest()
+	            .body(Collections.singletonMap("message", result.getMessage()));
+	}
+
+	@PutMapping("/updateGLMapping")
+	public ResponseEntity<?> updateGLMapping(@RequestBody GLMappingDTO map) {
+
+	    ResponseDTO<GLMappingDTO> result = masterService.updateGLMapping(map);
+
+	    if (result.isSuccess()) {
+	        return ResponseEntity.ok(result.getData());
+	    }
+
+	    return ResponseEntity.badRequest()
+	            .body(Collections.singletonMap("message", result.getMessage()));
+	}
+
+	@GetMapping("/getGLMappingData/{orgCode}")
+	public ResponseEntity<List<GLMappingDTO>> getGLMappingData(@PathVariable Long orgCode) {
+
+	    ResponseDTO<List<GLMappingDTO>> result =
+	            masterService.getGLMappingData(orgCode);
+
+	    return ResponseEntity.ok(result.getData());
+	}
+
+	@PostMapping("/createRateRevisionHistory")
+	public ResponseEntity<?> createRateRevisionHistory(@RequestBody RateRevisionHistoryDTO rate) {
+
+	    ResponseDTO<RateRevisionHistoryDTO> result =
+	            masterService.createRateRevisionHistory(rate);
+
+	    if (result.isSuccess()) {
+	        return ResponseEntity.ok(result.getData());
+	    }
+
+	    return ResponseEntity.badRequest()
+	            .body(Collections.singletonMap("message", result.getMessage()));
+	}
+
+	@PutMapping("/updateRateRevisionHistory")
+	public ResponseEntity<?> updateRateRevisionHistory(@RequestBody RateRevisionHistoryDTO rate) {
+
+	    ResponseDTO<RateRevisionHistoryDTO> result =
+	            masterService.updateRateRevisionHistory(rate);
+
+	    if (result.isSuccess()) {
+	        return ResponseEntity.ok(result.getData());
+	    }
+
+	    return ResponseEntity.badRequest()
+	            .body(Collections.singletonMap("message", result.getMessage()));
+	}
+
+	@GetMapping("/getRateRevisionHistoryData/{orgCode}")
+	public ResponseEntity<List<RateRevisionHistoryDTO>> getRateRevisionHistoryData(
+	        @PathVariable Long orgCode) {
+
+	    ResponseDTO<List<RateRevisionHistoryDTO>> result =
+	            masterService.getRateRevisionHistoryData(orgCode);
+
+	    return ResponseEntity.ok(result.getData());
+	}
+	
+	@PostMapping("/createHolidayCalendar")
+	public ResponseEntity<?> createHolidayCalendar(@RequestBody HolidayCalendarDTO holiday) {
+
+	    ResponseDTO<HolidayCalendarDTO> result =
+	            masterService.createHolidayCalendar(holiday);
+
+	    if (result.isSuccess()) {
+	        return ResponseEntity.ok(result.getData());
+	    }
+
+	    return ResponseEntity.badRequest()
+	            .body(Collections.singletonMap("message", result.getMessage()));
+	}
+
+	@PutMapping("/updateHolidayCalendar")
+	public ResponseEntity<?> updateHolidayCalendar(@RequestBody HolidayCalendarDTO holiday) {
+
+	    ResponseDTO<HolidayCalendarDTO> result =
+	            masterService.updateHolidayCalendar(holiday);
+
+	    if (result.isSuccess()) {
+	        return ResponseEntity.ok(result.getData());
+	    }
+
+	    return ResponseEntity.badRequest()
+	            .body(Collections.singletonMap("message", result.getMessage()));
+	}
+
+	@GetMapping("/getHolidayCalendarData/{orgCode}")
+	public ResponseEntity<List<HolidayCalendarDTO>> getHolidayCalendarData(
+	        @PathVariable Long orgCode) {
+
+	    ResponseDTO<List<HolidayCalendarDTO>> result =
+	            masterService.getHolidayCalendarData(orgCode);
+
+	    return ResponseEntity.ok(result.getData());
+	}
 }

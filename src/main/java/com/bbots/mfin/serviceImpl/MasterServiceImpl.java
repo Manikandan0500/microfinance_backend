@@ -15,16 +15,22 @@ import com.bbots.mfin.dto.RegionId;
 import com.bbots.mfin.dto.BranchRegionMap;
 import com.bbots.mfin.dto.BranchRegionMapId;
 import com.bbots.mfin.dto.DelinquencyBucketDTO;
+import com.bbots.mfin.dto.GLMappingDTO;
+import com.bbots.mfin.dto.HolidayCalendarDTO;
 import com.bbots.mfin.dto.LoanProductDTO;
 import com.bbots.mfin.dto.PenaltyRateHistoryDTO;
+import com.bbots.mfin.dto.RateRevisionHistoryDTO;
 import com.bbots.mfin.dto.ResponseDTO;
 import com.bbots.mfin.repository.Auth101Repository;
 import com.bbots.mfin.repository.AuthQ001Repository;
 import com.bbots.mfin.repository.RegionRepository;
 import com.bbots.mfin.repository.BranchRegionMapRepository;
 import com.bbots.mfin.repository.DelinquencyBucketRepository;
+import com.bbots.mfin.repository.GLMappingRepository;
+import com.bbots.mfin.repository.HolidayCalendarRepository;
 import com.bbots.mfin.repository.LoanProductRepository;
 import com.bbots.mfin.repository.PenaltyRateHistoryRepository;
+import com.bbots.mfin.repository.RateRevisionHistoryRepository;
 import com.bbots.mfin.service.AuthorizationProcedureService;
 import com.bbots.mfin.service.MasterService;
 
@@ -54,6 +60,15 @@ public class MasterServiceImpl implements MasterService {
 	
 	@Resource
 	private PenaltyRateHistoryRepository penaltyRateHistoryRepository;
+	
+	@Resource
+	private GLMappingRepository glMappingRepository;
+	
+	@Resource
+	private RateRevisionHistoryRepository rateRevisionHistoryRepository;
+	
+	@Resource
+	private HolidayCalendarRepository holidayCalendarRepository;
 
 	@Override
 	public ResponseDTO<Region> createRegion(Region region) {
@@ -507,6 +522,318 @@ public class MasterServiceImpl implements MasterService {
 	        responseDTO.setSuccess(true);
 	        responseDTO.setMessage("Sent for authorization");
 	        responseDTO.setData(penalty);
+
+	    } catch (Exception e) {
+
+	        responseDTO.setSuccess(false);
+	        responseDTO.setMessage(e.getMessage());
+	    }
+
+	    return responseDTO;
+	}
+	
+	@Override
+	public ResponseDTO<List<GLMappingDTO>> getGLMappingData(Long orgCode) {
+
+	    List<GLMappingDTO> resultData = new ArrayList<>();
+	    ResponseDTO<List<GLMappingDTO>> responseDTO = new ResponseDTO<>();
+
+	    try {
+
+	        resultData = glMappingRepository.findByIdOrgCode(orgCode);
+
+	        responseDTO.setSuccess(true);
+	        responseDTO.setMessage("Record fetched successfully");
+	        responseDTO.setData(resultData);
+
+	    } catch (Exception e) {
+
+	        responseDTO.setSuccess(false);
+	        responseDTO.setMessage(e.getMessage());
+	    }
+
+	    return responseDTO;
+	}
+	
+	@Override
+	public ResponseDTO<GLMappingDTO> createGLMapping(GLMappingDTO map) {
+
+	    ResponseDTO<GLMappingDTO> responseDTO = new ResponseDTO<>();
+
+	    try {
+
+	        if (glMappingRepository.existsById(
+	                map.getOrgcode(),
+	                map.getProduct_code(),
+	                map.getDelinquency_code())) {
+
+	            responseDTO.setSuccess(false);
+	            responseDTO.setMessage("GL Mapping already exists");
+	            return responseDTO;
+	        }
+
+	        map.setEuser("admin");
+	        map.setEdate(LocalDate.now().toString());
+
+	        authProcedureService.processAuthorization(
+	                map.getOrgcode(),
+	                "LOANGLM",
+	                "LOAN104",
+	                map,
+	                "INSERT");
+
+	        responseDTO.setSuccess(true);
+	        responseDTO.setMessage("Sent for authorization");
+	        responseDTO.setData(map);
+
+	    } catch (Exception e) {
+
+	        responseDTO.setSuccess(false);
+	        responseDTO.setMessage(e.getMessage());
+	    }
+
+	    return responseDTO;
+	}
+	@Override
+	public ResponseDTO<GLMappingDTO> updateGLMapping(GLMappingDTO map) {
+
+	    ResponseDTO<GLMappingDTO> responseDTO = new ResponseDTO<>();
+
+	    try {
+
+	        if (!glMappingRepository.existsById(
+	                map.getOrgcode(),
+	                map.getProduct_code(),
+	                map.getDelinquency_code())) {
+
+	            responseDTO.setSuccess(false);
+	            responseDTO.setMessage("GL Mapping does not exist");
+	            return responseDTO;
+	        }
+
+	        map.setEuser("admin");
+	        map.setEdate(LocalDate.now().toString());
+
+	        authProcedureService.processAuthorization(
+	                map.getOrgcode(),
+	                "LOANGLM",
+	                "LOAN104",
+	                map,
+	                "UPDATE");
+
+	        responseDTO.setSuccess(true);
+	        responseDTO.setMessage("Sent for authorization");
+	        responseDTO.setData(map);
+
+	    } catch (Exception e) {
+
+	        responseDTO.setSuccess(false);
+	        responseDTO.setMessage(e.getMessage());
+	    }
+
+	    return responseDTO;
+	}
+	
+	@Override
+	public ResponseDTO<List<RateRevisionHistoryDTO>> getRateRevisionHistoryData(Long orgCode) {
+
+	    List<RateRevisionHistoryDTO> resultData = new ArrayList<>();
+	    ResponseDTO<List<RateRevisionHistoryDTO>> responseDTO = new ResponseDTO<>();
+
+	    try {
+
+	        resultData = rateRevisionHistoryRepository.findByIdOrgCode(orgCode);
+
+	        responseDTO.setSuccess(true);
+	        responseDTO.setMessage("Record fetched successfully");
+	        responseDTO.setData(resultData);
+
+	    } catch (Exception e) {
+
+	        responseDTO.setSuccess(false);
+	        responseDTO.setMessage(e.getMessage());
+	    }
+
+	    return responseDTO;
+	}
+	
+	@Override
+	public ResponseDTO<RateRevisionHistoryDTO> createRateRevisionHistory(RateRevisionHistoryDTO rate) {
+
+	    ResponseDTO<RateRevisionHistoryDTO> responseDTO = new ResponseDTO<>();
+
+	    try {
+
+	        if (rateRevisionHistoryRepository.existsById(
+	                rate.getOrgcode(),
+	                rate.getProduct_code(),
+	                rate.getEff_date())) {
+
+	            responseDTO.setSuccess(false);
+	            responseDTO.setMessage("Rate Revision History already exists");
+	            return responseDTO;
+	        }
+
+	        rate.setEuser("admin");
+	        rate.setEdate(LocalDate.now().toString());
+
+	        authProcedureService.processAuthorization(
+	                rate.getOrgcode(),
+	                "LOANRRH",
+	                "LOAN108",
+	                rate,
+	                "INSERT");
+
+	        responseDTO.setSuccess(true);
+	        responseDTO.setMessage("Sent for authorization");
+	        responseDTO.setData(rate);
+
+	    } catch (Exception e) {
+
+	        responseDTO.setSuccess(false);
+	        responseDTO.setMessage(e.getMessage());
+	    }
+
+	    return responseDTO;
+	}
+	
+	
+	@Override
+	public ResponseDTO<RateRevisionHistoryDTO> updateRateRevisionHistory(RateRevisionHistoryDTO rate) {
+
+	    ResponseDTO<RateRevisionHistoryDTO> responseDTO = new ResponseDTO<>();
+
+	    try {
+
+	        if (!rateRevisionHistoryRepository.existsById(
+	                rate.getOrgcode(),
+	                rate.getProduct_code(),
+	                rate.getEff_date())) {
+
+	            responseDTO.setSuccess(false);
+	            responseDTO.setMessage("Rate Revision History does not exist");
+	            return responseDTO;
+	        }
+
+	        rate.setEuser("admin");
+	        rate.setEdate(LocalDate.now().toString());
+
+	        authProcedureService.processAuthorization(
+	                rate.getOrgcode(),
+	                "LOANRRH",
+	                "LOAN108",
+	                rate,
+	                "UPDATE");
+
+	        responseDTO.setSuccess(true);
+	        responseDTO.setMessage("Sent for authorization");
+	        responseDTO.setData(rate);
+
+	    } catch (Exception e) {
+
+	        responseDTO.setSuccess(false);
+	        responseDTO.setMessage(e.getMessage());
+	    }
+
+	    return responseDTO;
+	}
+	
+	
+	@Override
+	public ResponseDTO<List<HolidayCalendarDTO>> getHolidayCalendarData(Long orgCode) {
+
+	    List<HolidayCalendarDTO> resultData = new ArrayList<>();
+	    ResponseDTO<List<HolidayCalendarDTO>> responseDTO = new ResponseDTO<>();
+
+	    try {
+
+	        resultData = holidayCalendarRepository.findByIdOrgCode(orgCode);
+
+	        responseDTO.setSuccess(true);
+	        responseDTO.setMessage("Record fetched successfully");
+	        responseDTO.setData(resultData);
+
+	    } catch (Exception e) {
+
+	        responseDTO.setSuccess(false);
+	        responseDTO.setMessage(e.getMessage());
+	    }
+
+	    return responseDTO;
+	}
+	
+	
+	@Override
+	public ResponseDTO<HolidayCalendarDTO> createHolidayCalendar(HolidayCalendarDTO holiday) {
+
+	    ResponseDTO<HolidayCalendarDTO> responseDTO = new ResponseDTO<>();
+
+	    try {
+
+	        if (holidayCalendarRepository.existsById(
+	                holiday.getOrgcode(),
+	                holiday.getBranch_code(),
+	                holiday.getHoliday_date())) {
+
+	            responseDTO.setSuccess(false);
+	            responseDTO.setMessage("Holiday Calendar already exists");
+	            return responseDTO;
+	        }
+
+	        holiday.setEuser("admin");
+	        holiday.setEdate(LocalDate.now().toString());
+
+	        authProcedureService.processAuthorization(
+	                holiday.getOrgcode(),
+	                "HOLICAL",
+	                "CAL001",
+	                holiday,
+	                "INSERT");
+
+	        responseDTO.setSuccess(true);
+	        responseDTO.setMessage("Sent for authorization");
+	        responseDTO.setData(holiday);
+
+	    } catch (Exception e) {
+
+	        responseDTO.setSuccess(false);
+	        responseDTO.setMessage(e.getMessage());
+	    }
+
+	    return responseDTO;
+	}
+	
+	
+	@Override
+	public ResponseDTO<HolidayCalendarDTO> updateHolidayCalendar(HolidayCalendarDTO holiday) {
+
+	    ResponseDTO<HolidayCalendarDTO> responseDTO = new ResponseDTO<>();
+
+	    try {
+
+	        if (!holidayCalendarRepository.existsById(
+	                holiday.getOrgcode(),
+	                holiday.getBranch_code(),
+	                holiday.getHoliday_date())) {
+
+	            responseDTO.setSuccess(false);
+	            responseDTO.setMessage("Holiday Calendar does not exist");
+	            return responseDTO;
+	        }
+
+	        holiday.setEuser("admin");
+	        holiday.setEdate(LocalDate.now().toString());
+
+	        authProcedureService.processAuthorization(
+	                holiday.getOrgcode(),
+	                "HOLICAL",
+	                "CAL001",
+	                holiday,
+	                "UPDATE");
+
+	        responseDTO.setSuccess(true);
+	        responseDTO.setMessage("Sent for authorization");
+	        responseDTO.setData(holiday);
 
 	    } catch (Exception e) {
 
