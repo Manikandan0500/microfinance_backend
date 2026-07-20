@@ -26,6 +26,8 @@ public class AuthQ001Repository {
         AuthQ001.seteUser(rs.getString("euser"));
         AuthQ001.setOrgcode(rs.getLong("orgcode"));
         AuthQ001.setProgramid(rs.getString("programid"));
+        AuthQ001.setAuthsl(rs.getLong("authsl"));
+        AuthQ001.setDisplay_remarks(rs.getString("display_remarks"));     
         
         Date edate = rs.getDate("effdate");
         if (edate != null) {

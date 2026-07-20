@@ -31,13 +31,28 @@ public class AuthorizationProcedureService {
         String sql = "CALL pr_handle_authorization(?::bigint, ?::varchar, ?::varchar, ?::varchar, ?::json, ?::varchar)";
 
         try {
-            // Convert to Map and lowercase all keys so PostgreSQL's json_populate_record seamlessly maps them to its lowercase table columns
+            // Convert to Map and flatten nested objects (e.g. "id") so that
+            // PostgreSQL's json_populate_record can map all keys to flat column names.
 
             java.util.Map<String, Object> map = objectMapper.convertValue(payload, new com.fasterxml.jackson.core.type.TypeReference<java.util.Map<String, Object>>() {});
             java.util.Map<String, Object> lowerCaseMap = new java.util.HashMap<>();
             if (map != null) {
                 for (java.util.Map.Entry<String, Object> entry : map.entrySet()) {
-                    lowerCaseMap.put(entry.getKey().toLowerCase(), entry.getValue());
+                    String key = entry.getKey().toLowerCase();
+                    Object value = entry.getValue();
+                    // Flatten nested maps (e.g. "id": {"orgCode":101,"programId":"X"})
+                    // into the top-level map with lowercased keys
+                    if (value instanceof java.util.Map) {
+                        @SuppressWarnings("unchecked")
+                        java.util.Map<String, Object> nested = (java.util.Map<String, Object>) value;
+                        for (java.util.Map.Entry<String, Object> nestedEntry : nested.entrySet()) {
+                            lowerCaseMap.put(nestedEntry.getKey().toLowerCase(), nestedEntry.getValue());
+                        }
+                        // Also keep the original key in case it's needed elsewhere
+                        lowerCaseMap.put(key, value);
+                    } else {
+                        lowerCaseMap.put(key, value);
+                    }
                 }
             }
             String userName = loggedInUserContext.getUserScd() + " - " + loggedInUserContext.getUserName();

@@ -5,6 +5,10 @@ import java.util.List;
 import com.bbots.mfin.dto.Auth101;
 import com.bbots.mfin.dto.AuthQ001;
 import com.bbots.mfin.dto.Region;
+import com.bbots.mfin.dto.BranchRegionMap;
+import com.bbots.mfin.dto.DelinquencyBucketDTO;
+import com.bbots.mfin.dto.LoanProductDTO;
+import com.bbots.mfin.dto.PenaltyRateHistoryDTO;
 import com.bbots.mfin.dto.ResponseDTO;
 
 public interface MasterService {
@@ -16,5 +20,28 @@ public interface MasterService {
 	 ResponseDTO<List<AuthQ001>> getAuthQueueData(Long orgCode);
 	 
 	 ResponseDTO<List<Region>> getRegionData(Long orgCode);
+	 
+	 ResponseDTO<List<BranchRegionMap>> getBranchRegionMapData(Long orgCode);
+	 
+	 ResponseDTO<BranchRegionMap> createBranchRegionMap(BranchRegionMap map);
+	 
+	 ResponseDTO<BranchRegionMap> updateBranchRegionMap(BranchRegionMap map);
 
+	 ResponseDTO<List<LoanProductDTO>> getLoanProductData(Long orgCode);
+
+	 ResponseDTO<LoanProductDTO> createLoanProduct(LoanProductDTO loan);
+
+	 ResponseDTO<LoanProductDTO> updateLoanProduct(LoanProductDTO loan);
+
+	 ResponseDTO<List<DelinquencyBucketDTO>> getDelinquencyBucketData(Long orgCode);
+
+	 ResponseDTO<DelinquencyBucketDTO> createDelinquencyBucket(DelinquencyBucketDTO bucket);
+
+	 ResponseDTO<DelinquencyBucketDTO> updateDelinquencyBucket(DelinquencyBucketDTO bucket);
+	 
+	 ResponseDTO<List<PenaltyRateHistoryDTO>> getPenaltyRateHistoryData(Long orgCode);
+
+	 ResponseDTO<PenaltyRateHistoryDTO> createPenaltyRateHistory(PenaltyRateHistoryDTO penalty);
+
+	 ResponseDTO<PenaltyRateHistoryDTO> updatePenaltyRateHistory(PenaltyRateHistoryDTO penalty);
 }

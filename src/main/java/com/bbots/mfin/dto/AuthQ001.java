@@ -8,6 +8,8 @@ public class AuthQ001 {
     private String programid;
     private LocalDate effdate;
     private String eUser;
+    private Long authsl;
+    private String display_remarks;  
 	public Long getOrgcode() {
 		return orgcode;
 	}
@@ -31,6 +33,18 @@ public class AuthQ001 {
 	}
 	public void seteUser(String eUser) {
 		this.eUser = eUser;
+	}
+	public Long getAuthsl() {
+		return authsl;
+	}
+	public void setAuthsl(Long authsl) {
+		this.authsl = authsl;
+	}
+	public String getDisplay_remarks() {
+		return display_remarks;
+	}
+	public void setDisplay_remarks(String display_remarks) {
+		this.display_remarks = display_remarks;
 	}
     		
     		
