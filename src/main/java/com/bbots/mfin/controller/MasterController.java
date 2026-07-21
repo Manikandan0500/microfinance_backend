@@ -118,7 +118,6 @@ public class MasterController {
 
 		boolean exists = auth101Repository.existsById(auth101.getId());
 		String action = exists ? "UPDATE" : "INSERT";
-		auth101Repository.save(auth101);
 		authProcedureService.processAuthorization(auth101.getOrgCode(), "AUTHCTL", "auth101", auth101, action);
 
 		return ResponseEntity

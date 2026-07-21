@@ -213,7 +213,7 @@ public class MasterServiceImpl implements MasterService {
 
 			map.setId(new BranchRegionMapId());
 
-			authProcedureService.processAuthorization(map.getOrgcode(), "BRANCH-MST", "rgn002", map, "INSERT");
+			authProcedureService.processAuthorization(map.getOrgcode(), "BRANCHMST", "rgn002", map, "INSERT");
 
 			responseDTO.setSuccess(true);
 			responseDTO.setMessage("Sent for authorization");
@@ -246,7 +246,7 @@ public class MasterServiceImpl implements MasterService {
 			map.seteUser("admin");
 			map.seteDate(LocalDate.now().toString());
 
-			authProcedureService.processAuthorization(map.getOrgcode(), "BRANCH-MST", "rgn002", map, "UPDATE");
+			authProcedureService.processAuthorization(map.getOrgcode(), "BRANCHMST", "rgn002", map, "UPDATE");
 
 			responseDTO.setSuccess(true);
 			responseDTO.setMessage("Sent for authorization");
@@ -300,7 +300,7 @@ public class MasterServiceImpl implements MasterService {
 			loan.setEuser("admin");
 			loan.setEdate(LocalDate.now().toString());
 
-			authProcedureService.processAuthorization(loan.getOrgcode(), "LOAN-MST", "LOAN101", loan, "INSERT");
+			authProcedureService.processAuthorization(loan.getOrgcode(), "LOANMST", "LOAN101", loan, "INSERT");
 
 			responseDTO.setSuccess(true);
 			responseDTO.setMessage("Sent for authorization");
@@ -331,7 +331,7 @@ public class MasterServiceImpl implements MasterService {
 			loan.setEuser("admin");
 			loan.setEdate(LocalDate.now().toString());
 
-			authProcedureService.processAuthorization(loan.getOrgcode(), "LOAN-MST", "LOAN101", loan, "UPDATE");
+			authProcedureService.processAuthorization(loan.getOrgcode(), "LOANMST", "LOAN101", loan, "UPDATE");
 
 			responseDTO.setSuccess(true);
 			responseDTO.setMessage("Sent for authorization");
@@ -386,7 +386,7 @@ public class MasterServiceImpl implements MasterService {
 			bucket.setEuser("admin");
 			bucket.setEdate(LocalDate.now().toString());
 
-			authProcedureService.processAuthorization(bucket.getOrgcode(), "LOAN-DBM", "LOAN102", bucket, "INSERT");
+			authProcedureService.processAuthorization(bucket.getOrgcode(), "LOANDBM", "LOAN102", bucket, "INSERT");
 
 			responseDTO.setSuccess(true);
 			responseDTO.setMessage("Sent for authorization");
@@ -419,7 +419,7 @@ public class MasterServiceImpl implements MasterService {
 			bucket.setEuser("admin");
 			bucket.setEdate(LocalDate.now().toString());
 
-			authProcedureService.processAuthorization(bucket.getOrgcode(), "LOAN-DBM", "LOAN102", bucket, "UPDATE");
+			authProcedureService.processAuthorization(bucket.getOrgcode(), "LOANDBM", "LOAN102", bucket, "UPDATE");
 
 			responseDTO.setSuccess(true);
 			responseDTO.setMessage("Sent for authorization");
@@ -480,7 +480,7 @@ public class MasterServiceImpl implements MasterService {
 
 	        authProcedureService.processAuthorization(
 	                penalty.getOrgcode(),
-	                "LOAN-PRH",
+	                "LOANPRH",
 	                "LOAN103",
 	                penalty,
 	                "INSERT");
@@ -521,7 +521,7 @@ public class MasterServiceImpl implements MasterService {
 
 	        authProcedureService.processAuthorization(
 	                penalty.getOrgcode(),
-	                "LOAN-PRH",
+	                "LOANPRH",
 	                "LOAN103",
 	                penalty,
 	                "UPDATE");
