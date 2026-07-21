@@ -10,6 +10,9 @@ public class AuthQ001 {
     private String eUser;
     private Long authsl;
     private String display_remarks;  
+    private String datablock;
+
+    
 	public Long getOrgcode() {
 		return orgcode;
 	}
@@ -45,6 +48,12 @@ public class AuthQ001 {
 	}
 	public void setDisplay_remarks(String display_remarks) {
 		this.display_remarks = display_remarks;
+	}
+	public String getDatablock() {
+		return datablock;
+	}
+	public void setDatablock(String datablock) {
+		this.datablock = datablock;
 	}
     		
     		

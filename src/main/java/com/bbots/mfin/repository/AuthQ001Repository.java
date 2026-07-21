@@ -27,7 +27,8 @@ public class AuthQ001Repository {
         AuthQ001.setOrgcode(rs.getLong("orgcode"));
         AuthQ001.setProgramid(rs.getString("programid"));
         AuthQ001.setAuthsl(rs.getLong("authsl"));
-        AuthQ001.setDisplay_remarks(rs.getString("display_remarks"));     
+        AuthQ001.setDisplay_remarks(rs.getString("display_remarks"));  
+        AuthQ001.setDatablock(rs.getString("datablock"));
         
         Date edate = rs.getDate("effdate");
         if (edate != null) {
@@ -38,7 +39,12 @@ public class AuthQ001Repository {
     
     
     public List<AuthQ001> findByIdOrgCode(Long orgCode) {
-        String sql = "SELECT * FROM loandev.auth001 WHERE orgcode = ?";
+        String sql = "SELECT a.*, b.datablock " +
+                "FROM loandev.auth001 a " +
+                "LEFT JOIN loandev.auth002 b " +
+                "ON a.orgcode = b.orgcode " +
+                "AND a.authsl = b.authsl " +
+                "WHERE a.orgcode = ?";
         return jdbcTemplate.query(sql, rowMapper, orgCode);
     }
 
