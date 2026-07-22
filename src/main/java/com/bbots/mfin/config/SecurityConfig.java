@@ -65,6 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/**", "/exchange/**").permitAll()
                 .antMatchers("/api/programs/**").permitAll()
                 .antMatchers("/api/master/**").permitAll()
+                .antMatchers("/api/group-master", "/api/group-master/**", "/api/group-member-map", "/api/group-member-map/**", "/api/cif-master", "/api/cif-master/**", "/api/loan-account", "/api/loan-account/**", "/api/loan-application", "/api/loan-application/**").permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

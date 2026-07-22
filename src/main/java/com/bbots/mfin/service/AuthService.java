@@ -2,6 +2,7 @@ package com.bbots.mfin.service;
  
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bbots.mfin.dto.Auth101Config;
 import com.bbots.mfin.dto.AuthConfigDTO;
@@ -12,7 +13,12 @@ import com.bbots.mfin.dto.SubModule;
 import com.bbots.mfin.repository.AuthRepository;
 import com.bbots.mfin.repository.ModuleRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
- 
+import org.springframework.jdbc.core.JdbcTemplate;
+import com.bbots.mfin.model.LoanApplication;
+
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
  
 @Service
@@ -24,6 +30,9 @@ public class AuthService {
     @Autowired
     private ModuleRepository moduleRepository;
  
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Autowired
     private ObjectMapper objectMapper;
  
@@ -52,6 +61,7 @@ public class AuthService {
         return repository.getQueueByUser(userId);
     }
  
+    @Transactional
     public void approve(Long authSl, int level, String userId) {
         // 1. Get metadata and data before approval processing (since the procedure may
         // delete it from queue)
@@ -119,6 +129,52 @@ public class AuthService {
                 }
             } catch (Exception e) {
                 System.err.println("❌ Error in Post-Approval Sub-Module creation: " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else if (programId != null && "LOANAPP".equals(programId.trim())) {
+            try {
+                System.out.println("Executing Post-Approval Loan Creation. Blocks found: "
+                        + (blocks != null ? blocks.size() : 0));
+                if (blocks != null) {
+                    for (AuthDataBlock block : blocks) {
+                        System.out.println("Processing DataBlock: " + block.getDataBlock());
+                        LoanApplication app = objectMapper.readValue(block.getDataBlock(), LoanApplication.class);
+                        
+                        String sql1 = "INSERT INTO loandev.loan001 (orgcode, loan_account_no, queue_id, client_id, " +
+                                "group_code, product_code, currency_code, disbursed_amount, disbursement_date, " +
+                                "maturity_date, loan_status, outstanding_principal, outstanding_interest, " +
+                                "euser, edate, auser, adate) " +
+                                "VALUES (?, ?, ?, ?, ?, ?, ?, 0.0, ?, ?, 'Approved', 0.0, 0.0, ?, ?, ?, ?)";
+                                
+                        LocalDate disbursementDate = LocalDate.now();
+                        LocalDate maturityDate = app.getApprovedTenureMonths() != null ? 
+                                disbursementDate.plusMonths(app.getApprovedTenureMonths()) : disbursementDate.plusMonths(12);
+
+                        jdbcTemplate.update(sql1, app.getOrgCode(), app.getSourceRefNo(), app.getQueueId(),
+                                app.getClientId(), app.getGroupCode(), app.getProductCode(), app.getCurrencyCode(),
+                                java.sql.Date.valueOf(disbursementDate), java.sql.Date.valueOf(maturityDate),
+                                app.getEUser(), app.getEDate() != null ? Timestamp.valueOf(app.getEDate()) : null,
+                                userId, Timestamp.valueOf(LocalDateTime.now()));
+                        
+                        String sql2 = "INSERT INTO loandev.loan002 (orgcode, loan_account_no, status_seq_no, " +
+                                "status_from, status_to, changed_date, changed_by, remarks, euser, edate, auser, adate) " +
+                                "VALUES (?, ?, 1, ?, 'InProgress', ?, ?, 'Loan Approved', ?, ?, ?, ?)";
+                        jdbcTemplate.update(sql2, app.getOrgCode(), app.getSourceRefNo(), app.getDisbursementStatus(),
+                                Timestamp.valueOf(LocalDateTime.now()), userId,
+                                userId, Timestamp.valueOf(LocalDateTime.now()), userId, Timestamp.valueOf(LocalDateTime.now()));
+                        
+                        String sql3 = "INSERT INTO loandev.loan003 (orgcode, loan_account_no, as_on_date, " +
+                                "principal_outstanding, interest_outstanding, penalty_outstanding, total_outstanding, " +
+                                "euser, edate, auser, adate) " +
+                                "VALUES (?, ?, ?, 0, 0, 0, 0, ?, ?, ?, ?)";
+                        jdbcTemplate.update(sql3, app.getOrgCode(), app.getSourceRefNo(), java.sql.Date.valueOf(LocalDate.now()),
+                                userId, Timestamp.valueOf(LocalDateTime.now()), userId, Timestamp.valueOf(LocalDateTime.now()));
+                        
+                        System.out.println("✅ Auto-created LOAN001, LOAN002, LOAN003 for Loan Account: " + app.getSourceRefNo());
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("❌ Error in Post-Approval Loan creation: " + e.getMessage());
                 e.printStackTrace();
             }
         }
