@@ -44,6 +44,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 app.setSourceRefNo(loanApplicationRepository.getNextSourceRefNo());
             }
             
+            app.setDisbursementStatus("PENDING");
+            
             authProcedureService.processAuthorization(app.getOrgCode(), "LOANAPP", "lnapp001", app, "INSERT");
             
             response.setSuccess(true);

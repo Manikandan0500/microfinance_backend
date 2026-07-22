@@ -55,8 +55,45 @@ public class AuthorizationProcedureService {
                     }
                 }
             }
-            String userName = loggedInUserContext.getUserScd() + " - " + loggedInUserContext.getUserName();
-            lowerCaseMap.put("euser", userName);
+            String userName = null;
+            if (lowerCaseMap.containsKey("user_name") && lowerCaseMap.get("user_name") != null) {
+                userName = lowerCaseMap.get("user_name").toString();
+            } else if (lowerCaseMap.containsKey("username") && lowerCaseMap.get("username") != null) {
+                userName = lowerCaseMap.get("username").toString();
+            }
+
+            if (userName == null || userName.trim().isEmpty() || userName.equals("null - null")) {
+                userName = loggedInUserContext.getUserScd() + " - " + loggedInUserContext.getUserName();
+            }
+
+            if ("INSERT".equalsIgnoreCase(action)) {
+                lowerCaseMap.put("euser", userName);
+                lowerCaseMap.put("edate", java.time.LocalDateTime.now().toString());
+                lowerCaseMap.put("auser", null);
+                lowerCaseMap.put("adate", null);
+                lowerCaseMap.put("cuser", null);
+                lowerCaseMap.put("cdate", null);
+            } else if ("UPDATE".equalsIgnoreCase(action)) {
+                lowerCaseMap.put("euser", null);
+                lowerCaseMap.put("edate", null);
+                lowerCaseMap.put("auser", null);
+                lowerCaseMap.put("adate", null);
+                // Keep cuser and cdate from payload if available, else set them
+                if (!lowerCaseMap.containsKey("cuser") || lowerCaseMap.get("cuser") == null) {
+                    lowerCaseMap.put("cuser", userName);
+                }
+                if (!lowerCaseMap.containsKey("cdate") || lowerCaseMap.get("cdate") == null) {
+                    lowerCaseMap.put("cdate", java.time.LocalDateTime.now().toString());
+                }
+            } else {
+                lowerCaseMap.put("euser", null);
+                lowerCaseMap.put("edate", null);
+                lowerCaseMap.put("auser", null);
+                lowerCaseMap.put("adate", null);
+                lowerCaseMap.put("cuser", null);
+                lowerCaseMap.put("cdate", null);
+            }
+
             lowerCaseMap.put("__action", action);
 
             String jsonPayload = objectMapper.writeValueAsString(lowerCaseMap);

@@ -16,6 +16,19 @@ public class LoanApplicationController {
     @Autowired
     private LoanApplicationService loanApplicationService;
 
+    @Autowired
+    private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+
+    @GetMapping("/reset-sequence")
+    public String resetSequence() {
+        try {
+            jdbcTemplate.execute("SELECT setval('loandev.lnapp001_queue_id_seq', (SELECT COALESCE(MAX(queue_id::int), 1) FROM loandev.lnapp001))");
+            return "Sequence reset successfully";
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
     @GetMapping
     public List<LoanApplication> getAll() {
         return loanApplicationService.getAll();

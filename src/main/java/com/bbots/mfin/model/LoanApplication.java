@@ -23,7 +23,7 @@ public class LoanApplication {
     private String sourceRefNo;
     @JsonProperty("currency_code")
     private String currencyCode;
-    @JsonProperty("username")
+    @JsonProperty("user_name")
     private String userName;
     @JsonProperty("client_id")
     private String clientId;
