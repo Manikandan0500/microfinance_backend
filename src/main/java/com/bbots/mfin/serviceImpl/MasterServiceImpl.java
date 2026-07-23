@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,8 @@ import com.bbots.mfin.dto.RegionId;
 import com.bbots.mfin.dto.BranchRegionMap;
 import com.bbots.mfin.dto.BranchRegionMapId;
 import com.bbots.mfin.dto.DelinquencyBucketDTO;
+import com.bbots.mfin.dto.DisbursementDTO;
+import com.bbots.mfin.dto.DisbursementQueueDTO;
 import com.bbots.mfin.dto.GLMappingDTO;
 import com.bbots.mfin.dto.HolidayCalendarDTO;
 import com.bbots.mfin.dto.LoanProductDTO;
@@ -27,6 +30,8 @@ import com.bbots.mfin.repository.AuthQ001Repository;
 import com.bbots.mfin.repository.RegionRepository;
 import com.bbots.mfin.repository.BranchRegionMapRepository;
 import com.bbots.mfin.repository.DelinquencyBucketRepository;
+import com.bbots.mfin.repository.DisbursementQueueRepository;
+import com.bbots.mfin.repository.DisbursementRepository;
 import com.bbots.mfin.repository.GLMappingRepository;
 import com.bbots.mfin.repository.HolidayCalendarRepository;
 import com.bbots.mfin.repository.LoanProductRepository;
@@ -75,6 +80,12 @@ public class MasterServiceImpl implements MasterService {
 	@Resource
 
 	private PrepaymentForeclosureConfigRepository prepaymentForeclosureConfigRepository;
+	
+	@Resource
+	private DisbursementQueueRepository disbursementQueueRepository;
+	
+	@Resource
+	private DisbursementRepository disbursementRepository;
 	 
 
 	@Override
@@ -992,6 +1003,96 @@ public class MasterServiceImpl implements MasterService {
 	 
 	    return responseDTO;
 
+	}
+	
+	@Override
+	public ResponseDTO<List<DisbursementQueueDTO>> getPendingDisbursementQueue(Long orgCode) {
+
+	    List<DisbursementQueueDTO> resultData = new ArrayList<>();
+
+	    ResponseDTO<List<DisbursementQueueDTO>> responseDTO = new ResponseDTO<>();
+
+	    try {
+
+	        resultData = disbursementQueueRepository.getPendingApplications(orgCode);
+
+	        if (resultData != null && !resultData.isEmpty()) {
+
+	            responseDTO.setSuccess(true);
+	            responseDTO.setMessage("Pending Disbursement Queue fetched successfully");
+	            responseDTO.setData(resultData);
+
+	        } else {
+
+	            responseDTO.setSuccess(false);
+	            responseDTO.setMessage("No pending applications found");
+	            responseDTO.setData(resultData);
+	        }
+
+	    } catch (Exception e) {
+
+	        responseDTO.setSuccess(false);
+	        responseDTO.setMessage(e.getMessage());
+	    }
+
+	    return responseDTO;
+	}
+	
+	
+	@Override
+	@Transactional
+	public ResponseDTO<String> completeDisbursement(DisbursementDTO dto) {
+
+	    ResponseDTO<String> responseDTO = new ResponseDTO<>();
+
+	    try {
+
+	        // Generate Next Disbursement Sequence No
+
+	        Integer seqNo = disbursementRepository.getNextDisbursementSeqNo(
+	                dto.getOrgcode(),
+	                dto.getLoan_account_no());
+
+	        dto.setDisbursement_seq_no(seqNo);
+
+	        // Insert into DISB001
+
+	        disbursementRepository.insertDisbursement(dto);
+
+	        // Insert Repayments Schedule
+
+	        disbursementRepository.insertRepaymentSchedule(
+	                dto.getOrgcode(),
+	                dto.getLoan_account_no(),
+	                dto.getRepaymentSchedule(),
+	                dto.getEuser(),
+	                dto.getEdate());
+
+	        // Update LNAPP001
+
+	        disbursementRepository.updateLnappStatus(
+	                dto.getOrgcode(),
+	                dto.getLoan_account_no());
+
+	        // Update LOAN001
+
+	        disbursementRepository.updateLoan001(dto);
+
+	        // Update LOAN003
+
+	        disbursementRepository.updateLoan003(dto);
+
+	        responseDTO.setSuccess(true);
+	        responseDTO.setMessage("Disbursement completed successfully");
+	        responseDTO.setData(dto.getLoan_account_no());
+
+	    } catch (Exception e) {
+
+	        responseDTO.setSuccess(false);
+	        responseDTO.setMessage(e.getMessage());
+	    }
+
+	    return responseDTO;
 	}
 	 
 	

@@ -7,6 +7,8 @@ import com.bbots.mfin.dto.AuthQ001;
 import com.bbots.mfin.dto.Region;
 import com.bbots.mfin.dto.BranchRegionMap;
 import com.bbots.mfin.dto.DelinquencyBucketDTO;
+import com.bbots.mfin.dto.DisbursementDTO;
+import com.bbots.mfin.dto.DisbursementQueueDTO;
 import com.bbots.mfin.dto.GLMappingDTO;
 import com.bbots.mfin.dto.HolidayCalendarDTO;
 import com.bbots.mfin.dto.LoanProductDTO;
@@ -72,4 +74,8 @@ public interface MasterService {
 	 ResponseDTO<PrepaymentForeclosureConfigDTO> createPrepaymentForeclosureConfig(PrepaymentForeclosureConfigDTO config);
 	  
 	 ResponseDTO<PrepaymentForeclosureConfigDTO> updatePrepaymentForeclosureConfig(PrepaymentForeclosureConfigDTO config);
+	 
+	 ResponseDTO<List<DisbursementQueueDTO>> getPendingDisbursementQueue(Long orgCode);
+	 
+	 ResponseDTO<String> completeDisbursement(DisbursementDTO dto);
 }

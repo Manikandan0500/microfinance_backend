@@ -27,6 +27,8 @@ import com.bbots.mfin.dto.Region;
 import com.bbots.mfin.dto.RegionId;
 import com.bbots.mfin.dto.BranchRegionMap;
 import com.bbots.mfin.dto.DelinquencyBucketDTO;
+import com.bbots.mfin.dto.DisbursementDTO;
+import com.bbots.mfin.dto.DisbursementQueueDTO;
 import com.bbots.mfin.dto.GLMappingDTO;
 import com.bbots.mfin.dto.HolidayCalendarDTO;
 import com.bbots.mfin.dto.LoanProductDTO;
@@ -417,6 +419,38 @@ public class MasterController {
 	 
 	    return ResponseEntity.ok(result.getData());
 
+	}
+	
+	@GetMapping("/getPendingDisbursementQueue/{orgCode}")
+	public ResponseEntity<List<DisbursementQueueDTO>> getPendingDisbursementQueue(
+	        @PathVariable Long orgCode) {
+
+	    ResponseDTO<List<DisbursementQueueDTO>> result =
+	            masterService.getPendingDisbursementQueue(orgCode);
+
+	    return ResponseEntity.ok(result.getData());
+	}
+	
+	@PostMapping("/completeDisbursement")
+	public ResponseEntity<?> completeDisbursement(
+	        @RequestBody DisbursementDTO dto) {
+
+	    ResponseDTO<String> result =
+	            masterService.completeDisbursement(dto);
+
+	    if (result.isSuccess()) {
+
+	        return ResponseEntity.ok(
+	                Collections.singletonMap(
+	                        "message",
+	                        result.getMessage()));
+
+	    }
+
+	    return ResponseEntity.badRequest()
+	            .body(Collections.singletonMap(
+	                    "message",
+	                    result.getMessage()));
 	}
 	 
 }
