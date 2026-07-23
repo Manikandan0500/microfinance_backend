@@ -11,7 +11,9 @@ import com.bbots.mfin.dto.DisbursementDTO;
 import com.bbots.mfin.dto.DisbursementQueueDTO;
 import com.bbots.mfin.dto.GLMappingDTO;
 import com.bbots.mfin.dto.HolidayCalendarDTO;
+import com.bbots.mfin.dto.LoanAccountOutstandingDTO;
 import com.bbots.mfin.dto.LoanProductDTO;
+import com.bbots.mfin.dto.LoanStatusHistoryDTO;
 import com.bbots.mfin.dto.PenaltyRateHistoryDTO;
 import com.bbots.mfin.dto.PrepaymentForeclosureConfigDTO;
 import com.bbots.mfin.dto.RateRevisionHistoryDTO;
@@ -78,4 +80,9 @@ public interface MasterService {
 	 ResponseDTO<List<DisbursementQueueDTO>> getPendingDisbursementQueue(Long orgCode);
 	 
 	 ResponseDTO<String> completeDisbursement(DisbursementDTO dto);
+
+	 ResponseDTO<List<LoanAccountOutstandingDTO>> getLoanAccountOutstanding(String loanAccountNo);
+	 
+	 ResponseDTO<List<LoanStatusHistoryDTO>> getLoanStatusHistory(String loanAccountNo);
+
 }

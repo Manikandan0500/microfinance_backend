@@ -20,7 +20,9 @@ import com.bbots.mfin.dto.DisbursementDTO;
 import com.bbots.mfin.dto.DisbursementQueueDTO;
 import com.bbots.mfin.dto.GLMappingDTO;
 import com.bbots.mfin.dto.HolidayCalendarDTO;
+import com.bbots.mfin.dto.LoanAccountOutstandingDTO;
 import com.bbots.mfin.dto.LoanProductDTO;
+import com.bbots.mfin.dto.LoanStatusHistoryDTO;
 import com.bbots.mfin.dto.PenaltyRateHistoryDTO;
 import com.bbots.mfin.dto.PrepaymentForeclosureConfigDTO;
 import com.bbots.mfin.dto.RateRevisionHistoryDTO;
@@ -34,7 +36,9 @@ import com.bbots.mfin.repository.DisbursementQueueRepository;
 import com.bbots.mfin.repository.DisbursementRepository;
 import com.bbots.mfin.repository.GLMappingRepository;
 import com.bbots.mfin.repository.HolidayCalendarRepository;
+import com.bbots.mfin.repository.LoanAccountOutstandingRepository;
 import com.bbots.mfin.repository.LoanProductRepository;
+import com.bbots.mfin.repository.LoanStatusHistoryRepository;
 import com.bbots.mfin.repository.PenaltyRateHistoryRepository;
 import com.bbots.mfin.repository.PrepaymentForeclosureConfigRepository;
 import com.bbots.mfin.repository.RateRevisionHistoryRepository;
@@ -86,6 +90,12 @@ public class MasterServiceImpl implements MasterService {
 	
 	@Resource
 	private DisbursementRepository disbursementRepository;
+
+	private LoanAccountOutstandingRepository loanAccountOutstandingRepository;
+	
+	@Resource
+	private LoanStatusHistoryRepository loanStatusHistoryRepository;
+
 	 
 
 	@Override
@@ -1042,49 +1052,71 @@ public class MasterServiceImpl implements MasterService {
 	@Override
 	@Transactional
 	public ResponseDTO<String> completeDisbursement(DisbursementDTO dto) {
-
+ 
 	    ResponseDTO<String> responseDTO = new ResponseDTO<>();
-
+ 
 	    try {
-
+ 
 	        // Generate Next Disbursement Sequence No
-
+ 
 	        Integer seqNo = disbursementRepository.getNextDisbursementSeqNo(
 	                dto.getOrgcode(),
 	                dto.getLoan_account_no());
-
+ 
 	        dto.setDisbursement_seq_no(seqNo);
-
+ 
 	        // Insert into DISB001
-
+ 
 	        disbursementRepository.insertDisbursement(dto);
-
+ 
 	        // Insert Repayments Schedule
-
+ 
 	        disbursementRepository.insertRepaymentSchedule(
 	                dto.getOrgcode(),
 	                dto.getLoan_account_no(),
 	                dto.getRepaymentSchedule(),
 	                dto.getEuser(),
 	                dto.getEdate());
-
+ 
 	        // Update LNAPP001
-
+ 
 	        disbursementRepository.updateLnappStatus(
 	                dto.getOrgcode(),
 	                dto.getLoan_account_no());
-
+ 
 	        // Update LOAN001
-
+ 
 	        disbursementRepository.updateLoan001(dto);
-
+ 
 	        // Update LOAN003
-
+ 
 	        disbursementRepository.updateLoan003(dto);
-
+ 
 	        responseDTO.setSuccess(true);
 	        responseDTO.setMessage("Disbursement completed successfully");
 	        responseDTO.setData(dto.getLoan_account_no());
+ 
+	    } catch (Exception e) {
+ 
+	        responseDTO.setSuccess(false);
+	        responseDTO.setMessage(e.getMessage());
+	    }
+
+	    return responseDTO;
+	}
+	public ResponseDTO<List<LoanAccountOutstandingDTO>> getLoanAccountOutstanding(String loanAccountNo) {
+
+	    List<LoanAccountOutstandingDTO> resultData = new ArrayList<>();
+	    ResponseDTO<List<LoanAccountOutstandingDTO>> responseDTO = new ResponseDTO<>();
+
+	    try {
+
+	        resultData = loanAccountOutstandingRepository.findByLoanAccountNo(loanAccountNo);
+
+	        responseDTO.setSuccess(true);
+	        responseDTO.setMessage("Record fetched successfully");
+	        responseDTO.setData(resultData);
+
 
 	    } catch (Exception e) {
 
@@ -1096,5 +1128,28 @@ public class MasterServiceImpl implements MasterService {
 	}
 	 
 	
+	@Override
+	public ResponseDTO<List<LoanStatusHistoryDTO>> getLoanStatusHistory(String loanAccountNo) {
+
+	    List<LoanStatusHistoryDTO> resultData = new ArrayList<>();
+	    ResponseDTO<List<LoanStatusHistoryDTO>> responseDTO = new ResponseDTO<>();
+
+	    try {
+
+	        resultData = loanStatusHistoryRepository.findByLoanAccountNo(loanAccountNo);
+
+	        responseDTO.setSuccess(true);
+	        responseDTO.setMessage("Record fetched successfully");
+	        responseDTO.setData(resultData);
+
+	    } catch (Exception e) {
+
+	        responseDTO.setSuccess(false);
+	        responseDTO.setMessage(e.getMessage());
+	    }
+
+	    return responseDTO;
+	}
+
 
 }

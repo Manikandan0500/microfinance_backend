@@ -31,7 +31,10 @@ import com.bbots.mfin.dto.DisbursementDTO;
 import com.bbots.mfin.dto.DisbursementQueueDTO;
 import com.bbots.mfin.dto.GLMappingDTO;
 import com.bbots.mfin.dto.HolidayCalendarDTO;
+import com.bbots.mfin.dto.LoanAccountOutstandingDTO;
 import com.bbots.mfin.dto.LoanProductDTO;
+import com.bbots.mfin.dto.LoanRepaymentScheduleDTO;
+import com.bbots.mfin.dto.LoanStatusHistoryDTO;
 import com.bbots.mfin.dto.PenaltyRateHistoryDTO;
 import com.bbots.mfin.dto.PrepaymentForeclosureConfigDTO;
 import com.bbots.mfin.dto.RateRevisionHistoryDTO;
@@ -40,6 +43,7 @@ import com.bbots.mfin.repository.Auth101Repository;
 import com.bbots.mfin.repository.RegionRepository;
 import com.bbots.mfin.service.AuthService;
 import com.bbots.mfin.service.AuthorizationProcedureService;
+import com.bbots.mfin.service.LoanRepaymentScheduleService;
 import com.bbots.mfin.service.MasterService;
 
 @RestController
@@ -61,6 +65,9 @@ public class MasterController {
 
 	@Resource
 	private AuthService authService;
+	
+	@Resource
+	private LoanRepaymentScheduleService loanRepaymentScheduleService;
 
 	@PostMapping("/createRegion")
 	public ResponseEntity<ResponseDTO<Region>> createRegion(@RequestBody Region region) {
@@ -452,5 +459,44 @@ public class MasterController {
 	                    "message",
 	                    result.getMessage()));
 	}
+ 
+ 	@GetMapping("/getLoanAccountOutstanding/{loanAccountNo}")
+	public ResponseEntity<List<LoanAccountOutstandingDTO>> getLoanAccountOutstanding(
+	        @PathVariable String loanAccountNo) {
+
+	    ResponseDTO<List<LoanAccountOutstandingDTO>> result =
+	            masterService.getLoanAccountOutstanding(loanAccountNo);
+
+	    return ResponseEntity.ok(result.getData());
+	}
 	 
+	@GetMapping("/getLoanStatusHistory/{loanAccountNo}")
+	public ResponseEntity<List<LoanStatusHistoryDTO>> getLoanStatusHistory(
+	        @PathVariable String loanAccountNo) {
+
+	    ResponseDTO<List<LoanStatusHistoryDTO>> result =
+	            masterService.getLoanStatusHistory(loanAccountNo);
+
+	    return ResponseEntity.ok(result.getData());
+	}
+
+	@GetMapping("/getLoanRepaymentSchedule/{loanAccountNo}")
+    public ResponseEntity<ResponseDTO<List<LoanRepaymentScheduleDTO>>> getLoanRepaymentSchedule(
+            @PathVariable String loanAccountNo) {
+        ResponseDTO<List<LoanRepaymentScheduleDTO>> result = loanRepaymentScheduleService.getLoanRepaymentSchedule(loanAccountNo);
+        return ResponseEntity.ok(result);
+    }
+ 
+    @GetMapping("/getLoanRepaymentSchedule")
+    public ResponseEntity<ResponseDTO<List<LoanRepaymentScheduleDTO>>> getLoanRepaymentScheduleByParam(
+            @RequestParam(required = false) String loanAccountNo) {
+        ResponseDTO<List<LoanRepaymentScheduleDTO>> result;
+        if (loanAccountNo != null && !loanAccountNo.trim().isEmpty()) {
+            result = loanRepaymentScheduleService.getLoanRepaymentSchedule(loanAccountNo);
+        } else {
+            result = loanRepaymentScheduleService.getAllLoanRepaymentSchedules();
+        }
+        return ResponseEntity.ok(result);
+    }
+    
 }
